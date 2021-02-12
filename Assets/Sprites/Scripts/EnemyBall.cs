@@ -6,6 +6,9 @@ using DG.Tweening;                       // ☆　<=　追加します
 
 public class EnemyBall : MonoBehaviour
 {
+    [Header("的球の体力")]
+    public int hp;
+
     private CapsuleCollider2D capsuleCol;
 
     void Start()
@@ -44,7 +47,11 @@ public class EnemyBall : MonoBehaviour
             if (col.gameObject.TryGetComponent(out CharaBall charaBall))
             {
                 // 取得できているか確認
-                Debug.Log(charaBall);
+                // Debug.Log (charaBall);
+
+                // Hpを減少させる
+                hp -= charaBall.power;
+                Debug.Log("的球の残り体力値 : " + hp);
 
                 ////* ここから修正 *////
                 ///
@@ -56,13 +63,44 @@ public class EnemyBall : MonoBehaviour
 
 
                 ////* ここまで追加 *////
-                ///
-                // TODO 敵の破壊する処理を書く
 
+                ////* ここから追加 *////
+
+                // Hpが0以下になったら
+                if (hp <= 0)
+                {
+                    DestroyEnemy(sequence);  // <= ☆　Debug.Logをメソッドの呼び出しに変更してください
+                }
+                ////* ここまで追加 *////
 
             }
 
         }
     }
 
-}   
+    ////* 新しくメソッドを１つ追加します。ここから追加 *////
+
+    /// <summary>
+    /// 敵の破壊
+    /// </summary>
+    /// <param name="sequence"></param>
+    public void DestroyEnemy(Sequence sequence)
+    {
+        capsuleCol.enabled = false;
+
+        // 破壊までの時間
+        float duration = 0.5f;
+
+        // 内側に小さくする ドロップ内容で消える処理を分岐
+        sequence.Join(GetComponent<RectTransform>().DOSizeDelta(new Vector2(0, 100), duration).SetEase(Ease.Linear));
+
+        // スケールが 0 になるタイミング(DoTweenの時間と合わせる)で破棄
+        Destroy(gameObject, duration);
+
+
+
+    }
+
+
+
+}

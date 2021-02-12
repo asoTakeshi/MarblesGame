@@ -7,6 +7,8 @@ using UnityEngine;
 /// </summary>
 public class CharaBall : MonoBehaviour
 {
+    [Header("手玉の攻撃力")]
+    public int power;
     [Header("手球の速度")]
     public float speed;
 

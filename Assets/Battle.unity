@@ -151,12 +151,12 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 41936445}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children: []
-  m_Father: {fileID: 476655986}
-  m_RootOrder: 4
+  m_Father: {fileID: 172662639}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -175,6 +175,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73b7bf992d03674429506777e30ecad4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hp: 15
 --- !u!70 &41936448
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -262,7 +263,7 @@ GameObject:
   - component: {fileID: 172662640}
   m_Layer: 5
   m_Name: CueLiner
-  m_TagString: EnemyBall
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -277,7 +278,8 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 41936446}
   m_Father: {fileID: 476655986}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -498,7 +500,6 @@ RectTransform:
   - {fileID: 593686925}
   - {fileID: 1986912056}
   - {fileID: 172662639}
-  - {fileID: 41936446}
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1091,7 +1092,7 @@ GameObject:
   - component: {fileID: 1986912057}
   m_Layer: 5
   m_Name: CharaBall
-  m_TagString: CueLine
+  m_TagString: CharaBall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1127,6 +1128,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25b27daccb51e024d941885b814664e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  power: 5
   speed: 7
 --- !u!70 &1986912058
 CapsuleCollider2D:
