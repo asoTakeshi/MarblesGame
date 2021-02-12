@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using DG.Tweening;                       // ☆　<=　追加します
 
 
@@ -8,14 +9,24 @@ public class EnemyBall : MonoBehaviour
 {
     [Header("的球の体力")]
     public int hp;
+    
 
     private CapsuleCollider2D capsuleCol;
+
+
+    ////* ここから追加 *////
+
+    private int maxHp;              // ゲーム開始時の体力の最大値の保持用。Sliderの計算に使用する
+
+    [SerializeField]
+    private Slider hpSlider;        // Sliderコンポーネントとの紐づけ用。インスペクターでアサインする
+
+    ////* ここまで追加 *////
+
 
     void Start()
     {
         capsuleCol = GetComponent<CapsuleCollider2D>();
-
-        ////* ここから追加 *////
 
         // 最初のスケールを保持
         Vector2 startScale = transform.localScale;
@@ -26,55 +37,77 @@ public class EnemyBall : MonoBehaviour
         // Sequence初期化
         Sequence sequence = DOTween.Sequence();
 
-        // ①敵を回転させながら1.5倍の大きさにし、その後、元の大きさに戻しながら出現させる
+        // 敵を回転させながら1.5倍の大きさにし、その後、元の大きさに戻しながら出現させる
         sequence.Append(transform.DOLocalRotate(new Vector3(0, 720, 0), 1.0f, RotateMode.FastBeyond360).SetEase(Ease.Linear));
         sequence.Join(transform.DOScale(startScale * 1.5f, 1.0f).SetEase(Ease.InCirc));
         sequence.AppendInterval(0.15f);
-        sequence.Join(transform.DOScale(startScale, 0.15f).SetEase(Ease.InCirc));
 
-        ////* ここまで追加 *////
+
+        ////* ここから修正・追加 *////
+
+        sequence.Join(transform.DOScale(startScale, 0.15f).SetEase(Ease.InCirc).OnComplete(() => {
+
+            // 体力の最大値を代入
+            maxHp = hp;
+
+            // 体力ゲージの表示を更新 => 的球が出現してからゲージが徐々に満タンになるアニメ演出
+            UpdateHpGauge();
+        }));
+
+        ////* ここまで *////
 
     }
 
-   
+
+    ////* ここから新しくメソッドを１つ追加。ここから追加 *////
+
+
+    /// <summary>
+    /// 体力ゲージの表示を更新
+    /// </summary>
+    private void UpdateHpGauge()
+    {
+        hpSlider.DOValue((float)hp / maxHp, 0.5f);
+    }
+
+
+    ////* ここまで追加 *////
+
 
     private void OnCollisionEnter2D(Collision2D col)
     {
         // CharaBallのTagを持つゲームオブジェクトに接触したら
         if (col.gameObject.tag == "CharaBall")
         {
-            //CharaBallクラスを取得できるか判定
+            // CharaBallクラスを取得できるか判定
             if (col.gameObject.TryGetComponent(out CharaBall charaBall))
             {
-                // 取得できているか確認
-                // Debug.Log (charaBall);
-
                 // Hpを減少させる
                 hp -= charaBall.power;
-                Debug.Log("的球の残り体力値 : " + hp);
 
-                ////* ここから修正 *////
-                ///
+
+                ////* ここから修正・追加 *////
+
+                //Debug.Log("的球の残り体力値 : " + hp);//　<=　体力値の減少処理が動いているのであれば、ここでの確認は不要になりますので、削除してください
+
+                // 体力の値を体力ゲージに反映
+                UpdateHpGauge();
+
+                ////* ここまで *////
+
+
                 // Sequence初期化
                 Sequence sequence = DOTween.Sequence();
 
-                // ②手球と接触すると敵を回転(処理の内容は同じ)
-                transform.DOLocalRotate(new Vector3(0, 720, 0), 0.5f, RotateMode.FastBeyond360).SetEase(Ease.Linear);
-
-
-                ////* ここまで追加 *////
-
-                ////* ここから追加 *////
+                // 手球と接触すると敵を回転
+                sequence.Append(transform.DOLocalRotate(new Vector3(0, 720, 0), 0.5f, RotateMode.FastBeyond360).SetEase(Ease.Linear));
 
                 // Hpが0以下になったら
                 if (hp <= 0)
                 {
-                    DestroyEnemy(sequence);  // <= ☆　Debug.Logをメソッドの呼び出しに変更してください
+                    DestroyEnemy(sequence);
                 }
-                ////* ここまで追加 *////
-
             }
-
         }
     }
 
