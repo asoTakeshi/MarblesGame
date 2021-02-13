@@ -21,12 +21,13 @@ public class ObstacleBase : MonoBehaviour
 
         sequence.Append(rectTransform.DOSizeDelta(startSize, 1.0f).SetEase(Ease.OutCirc));
         sequence.Join(rectTransform.DOShakePosition(1.0f, 3, 20, 180).SetEase(Ease.Linear));
-
     }
+
     public virtual void SetUpObstacle(BattleManager battleManager)
     {
         this.battleManager = battleManager;
     }
+
     protected virtual void OnCollisionEnter2D(Collision2D col)
     {
         if (col.gameObject.tag == "Liner")
@@ -34,9 +35,9 @@ public class ObstacleBase : MonoBehaviour
             return;
         }
 
-        if (col.gameObject.tag == "charaBall")
+        if (col.gameObject.tag == "CharaBall")
         {
-            if(col.gameObject.TryGetComponent(out CharaBall charaBall))
+            if (col.gameObject.TryGetComponent(out CharaBall charaBall))
             {
                 BeforeTriggerEffect(charaBall);
 
@@ -47,8 +48,8 @@ public class ObstacleBase : MonoBehaviour
                 AfterTriggerEffect(charaBall);
             }
         }
-
     }
+
     /// <summary>
     /// 接触判定時に最初に追加する処理
     /// </summary>
@@ -57,6 +58,7 @@ public class ObstacleBase : MonoBehaviour
     {
 
     }
+
     /// <summary>
     /// 接触判定時に最後に追加する処理
     /// </summary>
@@ -65,5 +67,6 @@ public class ObstacleBase : MonoBehaviour
     {
 
     }
+
 }　
 
