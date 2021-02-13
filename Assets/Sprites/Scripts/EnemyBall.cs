@@ -21,10 +21,26 @@ public class EnemyBall : MonoBehaviour
     [SerializeField]
     private Slider hpSlider;        // Sliderコンポーネントとの紐づけ用。インスペクターでアサインする
 
+    ////* ここから追加 *////
+
+    private BattleManager gameManager;
+
+    private Transform canvasTran;
+
+    /// <summary>
+    /// 的球の設定
+    /// </summary>
+    /// <param name="gameManager"></param>
+    /// <param name="canvasTran"></param>
+    public void SetUpEnemyBall(BattleManager gameManager, Transform canvasTran)
+    {
+        this.gameManager = gameManager;
+        this.canvasTran = canvasTran;
+    }
     ////* ここまで追加 *////
 
-
     void Start()
+
     {
         capsuleCol = GetComponent<CapsuleCollider2D>();
 
@@ -126,6 +142,12 @@ public class EnemyBall : MonoBehaviour
 
         // 内側に小さくする ドロップ内容で消える処理を分岐
         sequence.Join(GetComponent<RectTransform>().DOSizeDelta(new Vector2(0, 100), duration).SetEase(Ease.Linear));
+
+        ////* ここから追加 *////
+        
+        // 敵の管理
+        //gameManager.RemoveEnemyList(this)  // 次の手順で実装するメソッドのため、一時コメントアウト
+
 
         // スケールが 0 になるタイミング(DoTweenの時間と合わせる)で破棄
         Destroy(gameObject, duration);
