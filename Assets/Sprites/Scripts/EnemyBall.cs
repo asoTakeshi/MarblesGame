@@ -2,30 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using DG.Tweening;                       // ☆　<=　追加します
-
+using DG.Tweening;
 
 public class EnemyBall : MonoBehaviour
 {
     [Header("的球の体力")]
     public int hp;
-    
 
     private CapsuleCollider2D capsuleCol;
-
-
-    ////* ここから追加 *////
 
     private int maxHp;              // ゲーム開始時の体力の最大値の保持用。Sliderの計算に使用する
 
     [SerializeField]
     private Slider hpSlider;        // Sliderコンポーネントとの紐づけ用。インスペクターでアサインする
 
+
     ////* ここから追加 *////
 
     private BattleManager gameManager;
 
     private Transform canvasTran;
+
 
     /// <summary>
     /// 的球の設定
@@ -37,11 +34,14 @@ public class EnemyBall : MonoBehaviour
         this.gameManager = gameManager;
         this.canvasTran = canvasTran;
     }
+
+
     ////* ここまで追加 *////
 
-    void Start()
 
-    {
+    void Start()
+    {                                                // 変更ありませんが掲載します
+
         capsuleCol = GetComponent<CapsuleCollider2D>();
 
         // 最初のスケールを保持
@@ -58,9 +58,6 @@ public class EnemyBall : MonoBehaviour
         sequence.Join(transform.DOScale(startScale * 1.5f, 1.0f).SetEase(Ease.InCirc));
         sequence.AppendInterval(0.15f);
 
-
-        ////* ここから修正・追加 *////
-
         sequence.Join(transform.DOScale(startScale, 0.15f).SetEase(Ease.InCirc).OnComplete(() => {
 
             // 体力の最大値を代入
@@ -69,28 +66,17 @@ public class EnemyBall : MonoBehaviour
             // 体力ゲージの表示を更新 => 的球が出現してからゲージが徐々に満タンになるアニメ演出
             UpdateHpGauge();
         }));
-
-        ////* ここまで *////
-
     }
 
-
-    ////* ここから新しくメソッドを１つ追加。ここから追加 *////
-
-
     /// <summary>
-    /// 体力ゲージの表示を更新
+    /// 体力ゲージの表示を更新                                      // 変更ありませんが掲載します
     /// </summary>
     private void UpdateHpGauge()
     {
         hpSlider.DOValue((float)hp / maxHp, 0.5f);
     }
 
-
-    ////* ここまで追加 *////
-
-
-    private void OnCollisionEnter2D(Collision2D col)
+    private void OnCollisionEnter2D(Collision2D col)                // 変更ありませんが掲載します
     {
         // CharaBallのTagを持つゲームオブジェクトに接触したら
         if (col.gameObject.tag == "CharaBall")
@@ -101,16 +87,8 @@ public class EnemyBall : MonoBehaviour
                 // Hpを減少させる
                 hp -= charaBall.power;
 
-
-                ////* ここから修正・追加 *////
-
-                //Debug.Log("的球の残り体力値 : " + hp);//　<=　体力値の減少処理が動いているのであれば、ここでの確認は不要になりますので、削除してください
-
                 // 体力の値を体力ゲージに反映
                 UpdateHpGauge();
-
-                ////* ここまで *////
-
 
                 // Sequence初期化
                 Sequence sequence = DOTween.Sequence();
@@ -127,8 +105,6 @@ public class EnemyBall : MonoBehaviour
         }
     }
 
-    ////* 新しくメソッドを１つ追加します。ここから追加 *////
-
     /// <summary>
     /// 敵の破壊
     /// </summary>
@@ -143,19 +119,16 @@ public class EnemyBall : MonoBehaviour
         // 内側に小さくする ドロップ内容で消える処理を分岐
         sequence.Join(GetComponent<RectTransform>().DOSizeDelta(new Vector2(0, 100), duration).SetEase(Ease.Linear));
 
+
         ////* ここから追加 *////
-        
+
         // 敵の管理
-        //gameManager.RemoveEnemyList(this)  // 次の手順で実装するメソッドのため、一時コメントアウト
+        //gameManager.RemoveEnemyList(this);　　　// 次の手順で実装するメソッドのため、一時コメントアウト
+
+        ////* ここまで *////
 
 
-        // スケールが 0 になるタイミング(DoTweenの時間と合わせる)で破棄
+        // スケールが0になるタイミングで破棄
         Destroy(gameObject, duration);
-
-
-
     }
-
-
-
 }

@@ -7,7 +7,6 @@ public class BattleManager : MonoBehaviour
 {
     public UIManager uiManager;
 
-    ////* ここから追加 *////
     [SerializeField]
     private CharaBall charaBallPrefab;
 
@@ -15,33 +14,61 @@ public class BattleManager : MonoBehaviour
     private Transform startCharaTran;
 
     private CharaBall charaBall;
+
+
+    ////* ここから追加 *////
+
+    [SerializeField]
+    private EnemyBall enemyBallPrefab;                               // 敵のプレファブ
+
+    [SerializeField]
+    private List<EnemyBall> enemyBallList = new List<EnemyBall>();   // 生成された敵を管理するためのリスト
+
+    [SerializeField]
+    private Transform canvasTran;                                    // CanvasのTransformを登録
+
+    [SerializeField]
+    private Transform leftBottomTran;                                // ゲーム画面の左下位置の指定用
+
+    [SerializeField]
+    private Transform rightTopTran;                                  // ゲーム画面の右上位置の指定用
+
+    [SerializeField]
+    private Transform enemyPlace;                                    // 生成した敵を入れるフォルダの役割
+
     ////* ここまで追加 *////
 
+
     IEnumerator Start()
-    {
-        // 初期化(この処理が終了するまで、次の処理は動かない)
+    {                              // 変更なしですが記載します
+        // 初期化
         yield return StartCoroutine(Initialize());
     }
+
     /// <summary>
     /// ゲーム設定値の初期化
     /// </summary>
     /// <returns></returns>
     public IEnumerator Initialize()
     {
-        // 残りの手球の数だけ手球のアイコンの生成する(この処理が終了するまで、次の処理は動かない)
+        // 手球を体力の数だけ生成する
         yield return StartCoroutine(uiManager.GenerateIconRemainingBalls(GameData.instance.charaBallHp));
-
-        ////* ここから追加 *////
 
         // GenerateCharaBallメソッドで手球の生成処理し、戻り値で変数に代入
         charaBall = GenerateCharaBall();
 
+
+        ////* ここから追加 *////
+
+        // 敵を生成
+        yield return StartCoroutine(GenerateEnemys());
+
         ////* ここまで追加 *////
+
     }
-    ////* メソッドを新しく２つ追加。ここから *////
 
     /// <summary>
-    /// 手球の生成
+    /// 手球の生成                                            // 変更なしですが記載します
     /// </summary>
     /// <returns></returns>
     private CharaBall GenerateCharaBall()
@@ -50,9 +77,10 @@ public class BattleManager : MonoBehaviour
         chara.SetUpCharaBall(this);
         return chara;
     }
-    /// <summary>
-    /// キャラを停止させてスタート位置へ戻す
-    /// </summary>
+
+    /// <summary> 
+    /// キャラを停止させてスタート位置へ戻す                  // 変更なしですが記載します
+    /// </summary> 
     /// <returns></returns>
     public IEnumerator RestartCharaPosition(float waiTime = 1.0f)
     {
@@ -60,16 +88,102 @@ public class BattleManager : MonoBehaviour
         charaBall.StopMoveBall();
 
         // スタート位置へ戻す
-        charaBall.transform.DOMove(startCharaTran.position,waiTime).SetEase(Ease.Linear);
+        charaBall.transform.DOMove(startCharaTran.position, waiTime).SetEase(Ease.Linear);
 
         yield return new WaitForSeconds(waiTime);
 
         // 手球を弾けるようにする
         charaBall.ChangeActivateCollider(true);
-
-
     }
 
+
+    ////* ここからメソッドを３つ追加 *////
+
+    /// <summary>
+    /// 敵を生成
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator GenerateEnemys()
+    {
+
+        // 生成する敵の数をランダムで設定
+        int appearEnemyCount = Random.Range(2, 5);
+
+        // 生成した数をカウント用
+        int count = 0;
+
+        // 生成した数が生成数になるまでループする。目標数になったら生成終了し、ループを抜ける
+        while (count < appearEnemyCount)
+        {
+
+            // Transform情報を代入
+            Transform enemyTran = canvasTran;
+
+            // 位置を画面内に収まる範囲でランダムに設定
+            enemyTran.position = new Vector2(Random.Range(leftBottomTran.localPosition.x, rightTopTran.localPosition.x), Random.Range(leftBottomTran.localPosition.y, rightTopTran.localPosition.y));
+
+            // 設定した位置に対してRayを発射
+            RaycastHit2D hit = Physics2D.Raycast(enemyTran.position, Vector3.forward);
+
+            // Rayに当たったオブジェクトを表示。何もないときは null
+            Debug.Log(hit.collider);
+
+            // もしも何もRayに当たらない場合(Rayに何か当たった場合にはその位置には生成しないので、ループの最初からやり直す)
+            if (hit.collider == null)
+            {
+
+                // 敵を生成
+                EnemyBall enemyBall = Instantiate(enemyBallPrefab, canvasTran, false);
+
+                // 親子関係を設定
+                enemyBall.transform.SetParent(enemyPlace);
+
+                // 敵の位置をランダムで設定した位置に設定
+                enemyBall.transform.localPosition = enemyTran.position;
+
+                // 敵の初期設定
+                enemyBall.SetUpEnemyBall(this, canvasTran);
+
+                // 敵の生成カウントを加算
+                count++;
+
+                // 敵の管理リストに追加
+                enemyBallList.Add(enemyBall);
+
+                // 少し待機して、ループを最初から繰り返す
+                yield return new WaitForSeconds(0.15f);
+            }
+        }
+    }
+
+    internal void RemoveEnemyList(EnemyBall enemyBall)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    /// <summary>
+    /// 敵をリストから削除
+    /// </summary>
+    /// <param name="enemy"></param>
+    public void RemoveEnemyList(GameObject enemy)
+    {
+        RemoveEnemyList(enemy);
+        CheckRemainingEnemies();
+    }
+
+    /// <summary>
+    /// 敵の残数を確認
+    /// </summary>
+    public void CheckRemainingEnemies()
+    {
+        if (enemyBallList.Count == 0)
+        {
+            // TODO ステージクリア処理を記述する
+            Debug.Log("ステージ　クリア");
+        }
+    }
+
+    ////* ここまで追加 *////
 
 }
 
