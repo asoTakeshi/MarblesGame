@@ -8,6 +8,15 @@ public class GameData : MonoBehaviour
 
     public int charaBallHp;
 
+    ////* ここから追加 *////
+
+    [Header("バトル時間の設定値")]
+    public int battleTime;
+
+    ////* ここまで追加 *////
+    
+
+
     void Awake()
     {
         if (instance == null)

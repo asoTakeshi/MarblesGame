@@ -15,6 +15,17 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Transform remainingBallTran;   // アイコンを生成する位置
 
+    ////* ここから追加 *////
+
+    [SerializeField]
+    private Image imgTimeGauge;    // バトル時間のゲージ表示用
+
+    [SerializeField]
+    private Text txtBattleTime;  // バトル時間の画面表示用
+
+    ////* ここまで追加 *////
+
+
     /// <summary>
     /// 手球の残数を画面上に生成
     /// </summary>
@@ -60,4 +71,23 @@ public class UIManager : MonoBehaviour
             }
         }
     }
+    ////* ここからメソッドを１つ追加 *////
+
+    /// <summary>
+    /// バトル時間の表示を更新
+    /// </summary>
+   
+    public void UpdateDisplayBattleTime(int currentTime)
+    {
+        // 残り時間を計算
+        float value = (float)currentTime / GameData.instance.battleTime;
+
+        // 時間ゲージをアニメさせながら減少
+        imgTimeGauge.DOFillAmount(value, 1.0f).SetEase(Ease.Linear);
+
+        // バトルの残り時間を更新
+        txtBattleTime.text = currentTime.ToString();
+    }
+
 }
+

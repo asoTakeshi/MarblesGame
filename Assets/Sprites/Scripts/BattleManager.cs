@@ -16,7 +16,7 @@ public class BattleManager : MonoBehaviour
     private CharaBall charaBall;
 
 
-    ////* ここから追加 *////
+   
 
     [SerializeField]
     private EnemyBall enemyBallPrefab;                               // 敵のプレファブ
@@ -36,6 +36,14 @@ public class BattleManager : MonoBehaviour
     [SerializeField]
     private Transform enemyPlace;                                    // 生成した敵を入れるフォルダの役割
 
+    ////* ここから追加 *////
+
+
+    [Header("バトルの残り時間")]
+    public int currentTime;
+
+    private float timer;                         // 時間計測用
+
     ////* ここまで追加 *////
 
 
@@ -43,6 +51,13 @@ public class BattleManager : MonoBehaviour
     {                              // 変更なしですが記載します
         // 初期化
         yield return StartCoroutine(Initialize());
+
+        ////* ここから追加 *////
+
+        // 残り時間の表示を更新
+        uiManager.UpdateDisplayBattleTime(currentTime);
+
+        ////* ここまで追加 *////
     }
 
     /// <summary>
@@ -51,6 +66,13 @@ public class BattleManager : MonoBehaviour
     /// <returns></returns>
     public IEnumerator Initialize()
     {
+        ////* ここから追加 *////
+
+        currentTime = GameData.instance.battleTime;
+
+        ////* ここまで追加 *////
+
+
         // 手球を体力の数だけ生成する
         yield return StartCoroutine(uiManager.GenerateIconRemainingBalls(GameData.instance.charaBallHp));
 
@@ -58,12 +80,11 @@ public class BattleManager : MonoBehaviour
         charaBall = GenerateCharaBall();
 
 
-        ////* ここから追加 *////
 
         // 敵を生成
         yield return StartCoroutine(GenerateEnemys());
 
-        ////* ここまで追加 *////
+        
 
     }
 
@@ -183,8 +204,34 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    ////* ここまで追加 *////
+    ////* ここからメソッドを１つ追加 *////
 
+    void Update()
+    {
+        // 時間を計測
+        timer += Time.deltaTime;
+
+        if (timer >= 1)
+        {
+            // 1秒経過するごとにcurrentTimeを減らす
+            timer = 0;
+            currentTime--;
+
+            if (currentTime <= 0)
+            {
+                currentTime = 0;
+
+                // TODO ゲームオーバー処理を書く
+                Debug.Log("Time Up!");
+            }
+        }
+
+        // バトル時間の表示を更新
+        uiManager.UpdateDisplayBattleTime(currentTime);
+    }
+
+    ////* ここまで追加 *////
 }
+
 
 
