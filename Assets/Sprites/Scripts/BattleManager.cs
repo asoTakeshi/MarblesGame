@@ -36,7 +36,7 @@ public class BattleManager : MonoBehaviour
     [SerializeField]
     private Transform enemyPlace;                                    // 生成した敵を入れるフォルダの役割
 
-    ////* ここから追加 *////
+   
 
 
     [Header("バトルの残り時間")]
@@ -44,7 +44,13 @@ public class BattleManager : MonoBehaviour
 
     private float timer;                         // 時間計測用
 
+    ////* ここから追加 *////
+
+    private int money;                          // ゲーム中のMoney管理用
+
     ////* ここまで追加 *////
+
+
 
 
     IEnumerator Start()
@@ -52,12 +58,18 @@ public class BattleManager : MonoBehaviour
         // 初期化
         yield return StartCoroutine(Initialize());
 
-        ////* ここから追加 *////
+        
 
         // 残り時間の表示を更新
         uiManager.UpdateDisplayBattleTime(currentTime);
 
+        ////* ここから追加 *////
+
+        // Moneyの表示を更新
+        uiManager.UpdateDisplayMoney(money);
+
         ////* ここまで追加 *////
+
     }
 
     /// <summary>
@@ -66,9 +78,14 @@ public class BattleManager : MonoBehaviour
     /// <returns></returns>
     public IEnumerator Initialize()
     {
-        ////* ここから追加 *////
+       
 
         currentTime = GameData.instance.battleTime;
+
+        ////* ここから追加 *////
+
+        // Moneyの初期値設定
+        money = 0;
 
         ////* ここまで追加 *////
 
@@ -202,6 +219,13 @@ public class BattleManager : MonoBehaviour
             // TODO ステージクリア処理を記述する
             Debug.Log("ステージ　クリア");
         }
+        ////* ここから追加 *////
+
+        // 今回のゲーム内で獲得したMoneyをMoney総数に加算
+        GameData.instance.ProcMoney(money);
+
+        ////* ここまで追加 *////
+
     }
 
     ////* ここからメソッドを１つ追加 *////
@@ -230,8 +254,26 @@ public class BattleManager : MonoBehaviour
         uiManager.UpdateDisplayBattleTime(currentTime);
     }
 
+    ////* ここからメソッドを１つ追加 *////
+
+    /// <summary>
+    /// Moneyを加算
+    /// </summary>
+    public void AddMoney(int amount)
+    {
+        // moneyを加算
+        money += amount;
+
+        // money 変数は private 修飾子なので、Debug.Logを表示して値の変化を確認する
+        Debug.Log(money);
+
+        // Moneyの表示を更新
+        uiManager.UpdateDisplayMoney(money);
+    }
     ////* ここまで追加 *////
+
 }
+
 
 
 

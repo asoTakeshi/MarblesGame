@@ -15,13 +15,18 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Transform remainingBallTran;   // アイコンを生成する位置
 
-    ////* ここから追加 *////
+   
 
     [SerializeField]
     private Image imgTimeGauge;    // バトル時間のゲージ表示用
 
     [SerializeField]
     private Text txtBattleTime;  // バトル時間の画面表示用
+
+    ////* ここから追加 *////
+
+    [SerializeField]
+    private Text Txtmoney;        // Moneyの画面表示用
 
     ////* ここまで追加 *////
 
@@ -88,6 +93,18 @@ public class UIManager : MonoBehaviour
         // バトルの残り時間を更新
         txtBattleTime.text = currentTime.ToString();
     }
+    ////* ここからメソッドを１つ追加 *////
+
+    /// <summary>
+    /// 現在までに獲得しているMoneyの表示を更新
+    /// </summary>
+
+    public void UpdateDisplayMoney(int money)
+    {
+        Txtmoney.text = money.ToString();
+    }
+    ////* ここまで追加 *////
+
 
 }
 

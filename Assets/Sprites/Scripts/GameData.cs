@@ -8,13 +8,16 @@ public class GameData : MonoBehaviour
 
     public int charaBallHp;
 
-    ////* ここから追加 *////
-
+   
     [Header("バトル時間の設定値")]
     public int battleTime;
 
+    ////* ここから追加 *////
+
+    [Header("Money総数")]
+    public int totalMoney;
+
     ////* ここまで追加 *////
-    
 
 
     void Awake()
@@ -30,4 +33,16 @@ public class GameData : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+    ////* メソッドを１つ追加する *////
+
+    /// <summary>
+    /// Moneyの総額を増減する
+    /// </summary>
+    public void ProcMoney(int money)
+    {
+        totalMoney += money;
+    }
+    ////* ここまで *////
+
 }

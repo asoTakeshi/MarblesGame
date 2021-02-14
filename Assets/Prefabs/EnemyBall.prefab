@@ -280,6 +280,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hp: 15
   hpSlider: {fileID: 666369056510842710}
+  money: 100
 --- !u!1 &666369056510842704
 GameObject:
   m_ObjectHideFlags: 0

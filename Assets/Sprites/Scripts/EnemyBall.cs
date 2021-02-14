@@ -17,11 +17,17 @@ public class EnemyBall : MonoBehaviour
     private Slider hpSlider;        // Sliderコンポーネントとの紐づけ用。インスペクターでアサインする
 
 
-    ////* ここから追加 *////
+   
 
     private BattleManager gameManager;
 
     private Transform canvasTran;
+
+    ////* ここから追加 *////
+
+    public int money;
+
+    ////* ここまで追加 *////
 
 
     /// <summary>
@@ -120,10 +126,15 @@ public class EnemyBall : MonoBehaviour
         sequence.Join(GetComponent<RectTransform>().DOSizeDelta(new Vector2(0, 100), duration).SetEase(Ease.Linear));
 
 
+
+
+        // 敵の管理リストからこの敵の情報を削除
+        //gameManager.RemoveEnemyList(this);　　　
+
         ////* ここから追加 *////
 
-        // 敵の管理
-        //gameManager.RemoveEnemyList(this);　　　// 次の手順で実装するメソッドのため、一時コメントアウト
+        // Moneyを加算
+        gameManager.AddMoney(money);
 
         ////* ここまで *////
 
