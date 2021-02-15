@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// 手球を打ち返すキューラインの生成・制御クラス
-/// </summary>
 public class CueLiner : MonoBehaviour
 {
     [Header("生成するキューラインのプレファブ")]
@@ -16,11 +13,31 @@ public class CueLiner : MonoBehaviour
     [Header("キューラインの出現時間")]
     public float duration;
 
-    private Vector2 touchPos; 　// マウスのクリック地点
+    private Vector2 touchPos;  // マウスのクリック地点
+
+
+    ////* ここから追加 *////
+
+    [SerializeField]
+    private BattleManager battleManager;
+
+    ////* ここまで追加 *////
 
 
     private void Update()
     {
+
+
+        ////* ここから追加 *////
+
+        // GameStateがPlay以外の時は処理しない
+        if (battleManager.gameState == BattleManager.GameState.Wait || battleManager.gameState == BattleManager.GameState.Result)
+        {
+            return;
+        }
+
+        ////* ここまで追加 *////
+
 
         // キューラインを引く
         DrawCueLine();

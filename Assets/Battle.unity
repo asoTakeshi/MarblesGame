@@ -216,7 +216,7 @@ GameObject:
   - component: {fileID: 172662640}
   m_Layer: 5
   m_Name: CueLiner
-  m_TagString: Player
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -255,6 +255,7 @@ MonoBehaviour:
   cuelinePrefab: {fileID: 2966416138090591247, guid: 7d5ef1ae86e598b459a35b3ad44782f5, type: 3}
   minCuelineLength: 0.3
   duration: 0.25
+  battleManager: {fileID: 1324313841}
 --- !u!1 &219216398
 GameObject:
   m_ObjectHideFlags: 0
@@ -1671,6 +1672,7 @@ MonoBehaviour:
   rightTopTran: {fileID: 1683636572}
   enemyPlace: {fileID: 1967118181}
   currentTime: 0
+  gameState: 0
 --- !u!4 &1324313842
 Transform:
   m_ObjectHideFlags: 0

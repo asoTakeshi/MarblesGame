@@ -15,9 +15,6 @@ public class BattleManager : MonoBehaviour
 
     private CharaBall charaBall;
 
-
-   
-
     [SerializeField]
     private EnemyBall enemyBallPrefab;                               // 敵のプレファブ
 
@@ -36,40 +33,48 @@ public class BattleManager : MonoBehaviour
     [SerializeField]
     private Transform enemyPlace;                                    // 生成した敵を入れるフォルダの役割
 
-   
-
-
     [Header("バトルの残り時間")]
     public int currentTime;
 
-    private float timer;                         // 時間計測用
+    private float timer;           　　　　　　　　　　　　　　　　　// 時間計測用
+
+    private int money;                        // ゲーム中のMoney管理用
+
 
     ////* ここから追加 *////
 
-    private int money;                          // ゲーム中のMoney管理用
+    public enum GameState
+    {
+        Wait,
+        Play,
+        Result
+    }
+
+    public GameState gameState = GameState.Wait;
 
     ////* ここまで追加 *////
 
 
-
-
     IEnumerator Start()
-    {                              // 変更なしですが記載します
+    {
+
+
+        ////* ここから追加 *////
+
+        gameState = GameState.Wait;
+        Debug.Log(gameState);
+
+        ////* ここまで追加 *////
+
+
         // 初期化
         yield return StartCoroutine(Initialize());
-
-        
 
         // 残り時間の表示を更新
         uiManager.UpdateDisplayBattleTime(currentTime);
 
-        ////* ここから追加 *////
-
         // Moneyの表示を更新
         uiManager.UpdateDisplayMoney(money);
-
-        ////* ここまで追加 *////
-
     }
 
     /// <summary>
@@ -78,17 +83,11 @@ public class BattleManager : MonoBehaviour
     /// <returns></returns>
     public IEnumerator Initialize()
     {
-       
 
         currentTime = GameData.instance.battleTime;
 
-        ////* ここから追加 *////
-
         // Moneyの初期値設定
         money = 0;
-
-        ////* ここまで追加 *////
-
 
         // 手球を体力の数だけ生成する
         yield return StartCoroutine(uiManager.GenerateIconRemainingBalls(GameData.instance.charaBallHp));
@@ -96,12 +95,16 @@ public class BattleManager : MonoBehaviour
         // GenerateCharaBallメソッドで手球の生成処理し、戻り値で変数に代入
         charaBall = GenerateCharaBall();
 
-
-
         // 敵を生成
         yield return StartCoroutine(GenerateEnemys());
 
-        
+
+        ////* ここから追加 *////
+
+        gameState = GameState.Play;
+        Debug.Log(gameState);
+
+        ////* ここまで追加 *////
 
     }
 
@@ -134,11 +137,8 @@ public class BattleManager : MonoBehaviour
         charaBall.ChangeActivateCollider(true);
     }
 
-
-    ////* ここからメソッドを３つ追加 *////
-
     /// <summary>
-    /// 敵を生成
+    /// 敵を生成               　　　　　　　　　　　　   // 変更なしですが記載します
     /// </summary>
     /// <returns></returns>
     private IEnumerator GenerateEnemys()
@@ -194,13 +194,8 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    internal void RemoveEnemyList(EnemyBall enemyBall)
-    {
-        throw new System.NotImplementedException();
-    }
-
     /// <summary>
-    /// 敵をリストから削除
+    /// 敵をリストから削除　　　　　　　                  // 変更なしですが記載します
     /// </summary>
     /// <param name="enemy"></param>
     public void RemoveEnemyList(GameObject enemy)
@@ -218,20 +213,35 @@ public class BattleManager : MonoBehaviour
         {
             // TODO ステージクリア処理を記述する
             Debug.Log("ステージ　クリア");
+
+            // 今回のゲーム内で獲得したMoneyをMoney総数に加算
+            GameData.instance.ProcMoney(money);
+
+
+            ////* ここから追加 *////
+
+            gameState = GameState.Result;
+            Debug.Log(gameState);
+
+            ////* ここまで追加 *////
+
+
         }
-        ////* ここから追加 *////
-
-        // 今回のゲーム内で獲得したMoneyをMoney総数に加算
-        GameData.instance.ProcMoney(money);
-
-        ////* ここまで追加 *////
-
     }
-
-    ////* ここからメソッドを１つ追加 *////
 
     void Update()
     {
+
+        ////* ここから追加 *////
+
+        if (gameState != GameState.Play)
+        {
+            return;
+        }
+
+        ////* ここまで追加 *////
+
+
         // 時間を計測
         timer += Time.deltaTime;
 
@@ -254,10 +264,8 @@ public class BattleManager : MonoBehaviour
         uiManager.UpdateDisplayBattleTime(currentTime);
     }
 
-    ////* ここからメソッドを１つ追加 *////
-
     /// <summary>
-    /// Moneyを加算
+    /// Moneyを加算　　　　　　　　　　　　　　　　　　// 変更なしですが記載します
     /// </summary>
     public void AddMoney(int amount)
     {
@@ -270,7 +278,6 @@ public class BattleManager : MonoBehaviour
         // Moneyの表示を更新
         uiManager.UpdateDisplayMoney(money);
     }
-    ////* ここまで追加 *////
 
 }
 
