@@ -41,18 +41,32 @@ public class BattleManager : MonoBehaviour
     private int money;                        // ゲーム中のMoney管理用
 
 
-    ////* ここから追加 *////
+   
 
     public enum GameState
     {
         Wait,
         Play,
-        Result
+        Result,  // <= ☆　半角カンマ(コンマ)を忘れずにつけてください。次の列挙子が追加できず、エラーになります
+
+        ////* ここから追加 *////
+
+        GameOver
+
+        ////* ここまで追加 *////
+
     }
+
 
     public GameState gameState = GameState.Wait;
 
-    ////* ここまで追加 *////
+   
+
+    [SerializeField]
+    private List<ObstacleBase> obstacleList = new List<ObstacleBase>();  // 障害物ゲームオブジェクトの管理用
+
+   
+
 
 
     IEnumerator Start()
@@ -62,7 +76,7 @@ public class BattleManager : MonoBehaviour
         ////* ここから追加 *////
 
         gameState = GameState.Wait;
-        Debug.Log(gameState);
+        //Debug.Log(gameState);
 
         ////* ここまで追加 *////
 
@@ -211,17 +225,26 @@ public class BattleManager : MonoBehaviour
     {
         if (enemyBallList.Count == 0)
         {
-            // TODO ステージクリア処理を記述する
-            Debug.Log("ステージ　クリア");
+           
+            //Debug.Log("ステージ　クリア");
 
             // 今回のゲーム内で獲得したMoneyをMoney総数に加算
             GameData.instance.ProcMoney(money);
 
 
-            ////* ここから追加 *////
+           
 
             gameState = GameState.Result;
             Debug.Log(gameState);
+
+            ////* ここから追加 *////
+
+            // 障害物を破棄し、ObstacleListをクリア
+            ClearObstacleList();
+
+
+            // クリア表示
+            uiManager.DisplayStageClear();
 
             ////* ここまで追加 *////
 
@@ -255,8 +278,16 @@ public class BattleManager : MonoBehaviour
             {
                 currentTime = 0;
 
+                ////* ここから追加 *////
+
+
                 // TODO ゲームオーバー処理を書く
-                Debug.Log("Time Up!");
+                //Debug.Log("Time Up!");
+
+                // ゲームオーバー処理
+                GameUp();
+
+                ////* ここまで追加 *////
             }
         }
 
@@ -278,8 +309,50 @@ public class BattleManager : MonoBehaviour
         // Moneyの表示を更新
         uiManager.UpdateDisplayMoney(money);
     }
+    ////* ここからメソッドを１つ追加 *////
+
+    //　この処理についてはコメントを記述していません。
+    //　処理を書きながらコメントを書いてください。もしも書けない場合にはListとforeachの処理についての復習をしましょう。
+
+    /// <summary>
+    /// 障害物を破棄し、ObstacleListをクリア
+    /// </summary>
+    private void ClearObstacleList()
+    {
+        if (obstacleList.Count > 0)
+        {
+            foreach (ObstacleBase obstacle in obstacleList)
+            {
+                Destroy(obstacle.gameObject);
+            }
+            obstacleList.Clear();
+        }
+    }
+
+    ////* ここからメソッドを１つ追加 *////
+
+    /// <summary>
+    /// ゲームオーバー処理
+    /// </summary>
+    public void GameUp()
+    {
+
+        // ゲームの進行状態をゲームオーバー状態に変更
+        gameState = GameState.GameOver;
+        Debug.Log(gameState);
+
+        // ゲームオーバー表示
+        uiManager.DisplayGameOver();
+    }
+
+    ////* ここまで追加 *////
 
 }
+
+
+
+
+
 
 
 

@@ -8,9 +8,9 @@ public class GameData : MonoBehaviour
 
     public int charaBallHp;
 
-   
     [Header("バトル時間の設定値")]
     public int battleTime;
+
 
     ////* ここから追加 *////
 
@@ -26,13 +26,13 @@ public class GameData : MonoBehaviour
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
-
         }
         else
         {
             Destroy(gameObject);
         }
     }
+
 
     ////* メソッドを１つ追加する *////
 
@@ -43,6 +43,6 @@ public class GameData : MonoBehaviour
     {
         totalMoney += money;
     }
-    ////* ここまで *////
 
+    ////* ここまで *////
 }
