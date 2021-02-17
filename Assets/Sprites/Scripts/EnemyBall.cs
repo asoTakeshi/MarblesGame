@@ -129,7 +129,7 @@ public class EnemyBall : MonoBehaviour
 
 
         // 敵の管理リストからこの敵の情報を削除
-        //gameManager.RemoveEnemyList(this);　　　
+        gameManager.RemoveEnemyList(this);　　　
 
         ////* ここから追加 *////
 

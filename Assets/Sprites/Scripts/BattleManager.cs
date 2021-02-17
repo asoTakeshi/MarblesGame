@@ -5,7 +5,7 @@ using DG.Tweening;                            // <= ☆　追加してくださ�
 
 public class BattleManager : MonoBehaviour
 {
-    public UIManager uiManager;
+    public UIManager uiManager;　　　　　　　　　　　　　　//　宣言フィールドには変更ありませんが記載します。
 
     [SerializeField]
     private CharaBall charaBallPrefab;
@@ -40,46 +40,32 @@ public class BattleManager : MonoBehaviour
 
     private int money;                        // ゲーム中のMoney管理用
 
-
-   
-
     public enum GameState
     {
         Wait,
         Play,
-        Result,  // <= ☆　半角カンマ(コンマ)を忘れずにつけてください。次の列挙子が追加できず、エラーになります
-
-        ////* ここから追加 *////
-
+        Result,
         GameOver
-
-        ////* ここまで追加 *////
-
     }
 
-
     public GameState gameState = GameState.Wait;
-
-   
 
     [SerializeField]
     private List<ObstacleBase> obstacleList = new List<ObstacleBase>();  // 障害物ゲームオブジェクトの管理用
 
-   
 
+    ////* ここから追加 *////
+
+    [SerializeField]
+    private ResultPopUp resultPopUpPrefab;              // ResultPopUp ゲームオブジェクトのプレファブをインスペクターよりアサインする
+
+    ////* ここまで追加 *////
 
 
     IEnumerator Start()
-    {
-
-
-        ////* ここから追加 *////
+    {                   　　　　      // 変更なしですが記載します
 
         gameState = GameState.Wait;
-        //Debug.Log(gameState);
-
-        ////* ここまで追加 *////
-
 
         // 初期化
         yield return StartCoroutine(Initialize());
@@ -92,7 +78,7 @@ public class BattleManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ゲーム設定値の初期化
+    /// ゲーム設定値の初期化　　　　　                      // 変更なしですが記載します
     /// </summary>
     /// <returns></returns>
     public IEnumerator Initialize()
@@ -112,14 +98,8 @@ public class BattleManager : MonoBehaviour
         // 敵を生成
         yield return StartCoroutine(GenerateEnemys());
 
-
-        ////* ここから追加 *////
-
         gameState = GameState.Play;
         Debug.Log(gameState);
-
-        ////* ここまで追加 *////
-
     }
 
     /// <summary>
@@ -212,9 +192,10 @@ public class BattleManager : MonoBehaviour
     /// 敵をリストから削除　　　　　　　                  // 変更なしですが記載します
     /// </summary>
     /// <param name="enemy"></param>
-    public void RemoveEnemyList(GameObject enemy)
+    public void RemoveEnemyList(EnemyBall enemy)
     {
-        RemoveEnemyList(enemy);
+        //RemoveEnemyList(enemy);
+        enemyBallList.Remove(enemy);
         CheckRemainingEnemies();
     }
 
@@ -225,45 +206,37 @@ public class BattleManager : MonoBehaviour
     {
         if (enemyBallList.Count == 0)
         {
-           
-            //Debug.Log("ステージ　クリア");
 
             // 今回のゲーム内で獲得したMoneyをMoney総数に加算
-            GameData.instance.ProcMoney(money);
+            //GameData.instance.ProcMoney(money);　　　　　　　　　　<=　☆　リザルトポップアップ内で加算処理を行うため、コメントアウトします　☆
 
-
-           
-
+            // ゲームクリアの状態
             gameState = GameState.Result;
             Debug.Log(gameState);
-
-            ////* ここから追加 *////
 
             // 障害物を破棄し、ObstacleListをクリア
             ClearObstacleList();
 
-
             // クリア表示
             uiManager.DisplayStageClear();
 
-            ////* ここまで追加 *////
+            ////* ここから追加 *////
 
+            // リザルトポップアップ生成
+            StartCoroutine(GenerateResultPopUp(true));
+
+            ////* ここまで追加 *////
 
         }
     }
 
+
     void Update()
-    {
-
-        ////* ここから追加 *////
-
+    {　　　　　　　　　　　　　　　　　　// 変更なしですが記載します
         if (gameState != GameState.Play)
         {
             return;
         }
-
-        ////* ここまで追加 *////
-
 
         // 時間を計測
         timer += Time.deltaTime;
@@ -278,16 +251,8 @@ public class BattleManager : MonoBehaviour
             {
                 currentTime = 0;
 
-                ////* ここから追加 *////
-
-
-                // TODO ゲームオーバー処理を書く
-                //Debug.Log("Time Up!");
-
                 // ゲームオーバー処理
                 GameUp();
-
-                ////* ここまで追加 *////
             }
         }
 
@@ -309,13 +274,9 @@ public class BattleManager : MonoBehaviour
         // Moneyの表示を更新
         uiManager.UpdateDisplayMoney(money);
     }
-    ////* ここからメソッドを１つ追加 *////
-
-    //　この処理についてはコメントを記述していません。
-    //　処理を書きながらコメントを書いてください。もしも書けない場合にはListとforeachの処理についての復習をしましょう。
 
     /// <summary>
-    /// 障害物を破棄し、ObstacleListをクリア
+    /// 障害物を破棄し、ObstacleListをクリア　　　　　　　　　　　　　// 変更なしですが記載します
     /// </summary>
     private void ClearObstacleList()
     {
@@ -329,8 +290,6 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    ////* ここからメソッドを１つ追加 *////
-
     /// <summary>
     /// ゲームオーバー処理
     /// </summary>
@@ -343,12 +302,42 @@ public class BattleManager : MonoBehaviour
 
         // ゲームオーバー表示
         uiManager.DisplayGameOver();
+
+
+        ////* ここから追加 *////
+
+        // リザルトポップアップ生成
+        StartCoroutine(GenerateResultPopUp());
+
+        ////* ここまで追加 *////
+
     }
 
+
+    ////* ここからメソッドを１つ追加 *////
+
+
+    /// <summary>
+    /// リザルトポップアップを生成
+    /// </summary>
+    /// <param name="isClear"></param>
+    /// <returns></returns>
+    private IEnumerator GenerateResultPopUp(bool isClear = false)
+    {
+
+        // ステージクリアやゲームオーバーの文字が画面にすべて表示されるのを待つ
+        yield return new WaitForSeconds(2.0f);
+
+        // リザルトポップアップを生成
+        ResultPopUp resultPopUp = Instantiate(resultPopUpPrefab, canvasTran, false);
+
+        // リザルトポップアップを設定
+        resultPopUp.SetUpResultPopUp(this, money, currentTime, charaBall.Hp, isClear);
+    }
+
+
     ////* ここまで追加 *////
-
 }
-
 
 
 
